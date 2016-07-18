@@ -28,6 +28,14 @@ template< typename TPixel, unsigned int VImageDimension >
 DICOMImage< TPixel, VImageDimension >
 ::DICOMImage()
 {
+  m_DICOMMetaData = new MetaDataDictionary;
+}
+
+template< typename TPixel, unsigned int VImageDimension >
+DICOMImage< TPixel, VImageDimension >
+::~DICOMImage()
+{
+  delete m_DICOMMetaData;
 }
 
 template< typename TPixel, unsigned int VImageDimension >
@@ -36,6 +44,30 @@ DICOMImage< TPixel, VImageDimension >
 ::PrintSelf(std::ostream & os, Indent indent) const
 {
   Superclass::PrintSelf(os, indent);
+}
+
+template< typename TPixel, unsigned int VImageDimension >
+MetaDataDictionary &
+DICOMImage< TPixel, VImageDimension >
+::GetDICOMMetaData(void)
+{
+  return *m_DICOMMetaData;
+}
+
+template< typename TPixel, unsigned int VImageDimension >
+const MetaDataDictionary &
+DICOMImage< TPixel, VImageDimension >
+::GetDICOMMetaData(void) const
+{
+  return *m_DICOMMetaData;
+}
+
+template< typename TPixel, unsigned int VImageDimension >
+void
+DICOMImage< TPixel, VImageDimension >
+::SetDICOMMetaData(const MetaDataDictionary & rhs)
+{
+  *m_DICOMMetaData = rhs;
 }
 
 } // end namespace itk
