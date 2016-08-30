@@ -1,2 +1,17 @@
 PatientName
+PixelData
+WindowCenter
+WindowWidth
+WindowCenterWidthExplanation
+HighBit
+BitsStored
+PixelSpacing
+SamplesPerPixel
+PhotometricInterpretation
+Rows
+Columns
+SliceLocation
+SmallestImagePixelValue
+LargestImagePixelValue
+PixelBandwidth
 ThisIsNotAValidIdentifier

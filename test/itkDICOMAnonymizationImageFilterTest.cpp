@@ -33,12 +33,14 @@ struct ElementFilter
     std::string op;
 };
 
+typedef std::vector<ElementFilter> ElementFilters;
 
-std::vector<ElementFilter> parseProfile(const char* profile)
+
+ElementFilters parseProfile(const char* profile)
 {
     std::ifstream ifs(profile);
     std::string line;
-    std::vector<ElementFilter> filters;
+    ElementFilters filters;
 
     const DcmDataDictionary& dict = dcmDataDict.rdlock();
     dcmDataDict.unlock();
@@ -59,12 +61,43 @@ std::vector<ElementFilter> parseProfile(const char* profile)
     return filters;
 }
 
+void filterElements(DcmDataset* dataset, ElementFilters filters)
+{
+    DcmStack stack;
+    DcmObject *dobj = NULL;
+    DcmTagKey tag;
+    OFCondition status = dataset->nextObject(stack, OFTrue);
+    while (status.good())
+    {
+        dobj = stack.top();
+        bool found = false;
+        // Search the white list for this tag
+        for (auto filter : filters)
+        {
+            if (filter.entry.getKey() == dobj->getTag())
+            {
+                found = true;
+                break;
+            }
+        }
+
+        if (!found)
+        {
+            std::cout << "Removing non-whitelisted tag: " << dobj->getTag() << std::endl;
+            stack.pop();
+            delete ((DcmItem *)(stack.top()))->remove(dobj);
+        }
+
+        status = dataset->nextObject(stack, OFTrue);
+    }
+}
+
 
 void anonymize(const char* in, const char* out, const char* profile)
 {
     // Read input image
-    DcmFileFormat inFormat;
-    OFCondition loadStatus = inFormat.loadFile(in);
+    DcmFileFormat dff;
+    OFCondition loadStatus = dff.loadFile(in);
 
     if (loadStatus.bad())
     {
@@ -73,44 +106,23 @@ void anonymize(const char* in, const char* out, const char* profile)
         throw std::logic_error(msg.str());
     }
 
-
-
     // Parse profile to generate white list of elements
     auto filters = parseProfile(profile);
 
-    DcmFileFormat outFormat;
-    DcmDataset* inData = inFormat.getDataset();
-    DcmDataset* outData = outFormat.getDataset();
+    DcmDataset* dataset = dff.getDataset();
 
-    // Create a new UID for the output dataset
-    char uid[100];
-    dcmGenerateUniqueIdentifier(uid, SITE_INSTANCE_UID_ROOT);
-    outData->putAndInsertString(DCM_SOPInstanceUID, uid);
+    // Iterate over all tags, apply filters
+    filterElements(dataset, filters);
 
-    // Add whitelisted items to the output dataset
-    for (auto filter : filters)
-    {
-        if (inData->tagExists(filter.entry))
-        {
-            std::cout << "Tag exists: " << filter.entry << std::endl;
-        }
-        else
-        {
-            std::cout << "Skipping tag, does not exist." << filter.entry << std::endl;
-        }
-    }
-
-    // Copy pixel data to the output dataset
-    /*dataset->putAndInsertUint8Array(DCM_PixelData, pixelData, pixelLength);
 
     // Write the output file
-    OFCondition saveStatus = fileformat.saveFile(out, EXS_LittleEndianExplicit);
+    OFCondition saveStatus = dff.saveFile(out, EXS_LittleEndianExplicit);
     if (saveStatus.bad())
     {
         std::ostringstream msg;
         msg << "Unable to save filtered DICOM file: " << out << std::endl;
         throw std::logic_error(msg.str());
-    }*/
+    }
 }
 
 
