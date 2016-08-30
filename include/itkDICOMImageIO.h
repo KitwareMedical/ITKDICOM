@@ -4,6 +4,8 @@
 #include <fstream>
 #include <stdio.h>
 #include "itkImageIOBase.h"
+#include "itkDCMTKFileReader.h"  // DCMTKItem, DCMTKSequence
+
 
 class DicomImage;
 

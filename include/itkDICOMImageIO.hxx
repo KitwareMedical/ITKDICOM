@@ -5,7 +5,6 @@
 
 #include "itkByteSwapper.h"
 #include "itksys/SystemTools.hxx"
-#include "itkDCMTKFileReader.h"
 #include <iostream>
 #include "vnl/vnl_cross.h"
 #include "itkMath.h"
@@ -247,7 +246,7 @@ void DICOMImageIO::ReadImageInformation()
 
   // check for multiframe > 3D
   ::itk::int32_t numPhases;
-  unsigned      numDim(3);
+  unsigned       numDim(3);
 
   if(reader.GetElementSL(0x2001,0x1017,numPhases,false) != EXIT_SUCCESS)
     {
