@@ -1,7 +1,7 @@
 #include <fstream>
+#include <map>
 #include <sstream>
 #include <string>
-#include <vector>
 
 #include "dcdict.h"          /* DcmDataDictionary, dcmDataDict */
 #include "dcdicent.h"        /* DicomDictEntry */
@@ -33,7 +33,7 @@ struct ElementFilter
     std::string op;
 };
 
-typedef std::vector<ElementFilter> ElementFilters;
+typedef std::map<DcmTagKey, ElementFilter> ElementFilters;
 
 
 ElementFilters parseProfile(const char* profile)
@@ -50,7 +50,8 @@ ElementFilters parseProfile(const char* profile)
         const DcmDictEntry* entry = dict.findEntry(line.c_str());
         if (entry)
         {
-            filters.push_back(ElementFilter(*entry, "TODO - operations"));
+            filters.insert(std::pair<DcmTagKey, ElementFilter>(
+                entry->getKey(), ElementFilter(*entry, "TODO - operations")));
         }
         else
         {
@@ -70,18 +71,9 @@ void filterElements(DcmDataset* dataset, ElementFilters filters)
     while (status.good())
     {
         dobj = stack.top();
-        bool found = false;
-        // Search the white list for this tag
-        for (auto filter : filters)
-        {
-            if (filter.entry.getKey() == dobj->getTag())
-            {
-                found = true;
-                break;
-            }
-        }
 
-        if (!found)
+        // Search the white list for this tag
+        if(filters.find(dobj->getTag()) == filters.end())
         {
             std::cout << "Removing non-whitelisted tag: " << dobj->getTag() << std::endl;
             stack.pop();
