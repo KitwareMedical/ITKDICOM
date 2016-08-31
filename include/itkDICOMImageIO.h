@@ -14,6 +14,7 @@ namespace itk
 /** \class DICOMImageIO
  *
  *  \brief Read DICOM image file format.
+ *  \ingroup DICOM
  */
 class DICOMImageIO : public ImageIOBase
 {
