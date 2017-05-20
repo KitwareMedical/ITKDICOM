@@ -17,3 +17,6 @@ Approach:
 - Whitelist a set of metadata / tags required per modality
 - Whitelist metadata for anonymization
 - Use `DCMTK <http://dicom.offis.de/>`_ for heavy lifting
+
+This repository is currently a work in progress, and functional filters are
+not yet available.
