@@ -6,7 +6,10 @@ file(READ "${MY_CURRENT_DIR}/README.rst" DOCUMENTATION)
 itk_module(DICOM
   DEPENDS
     ITKCommon
+    ITKIOImageBase
+    ITKDCMTK
     ITKIODCMTK
+    ITKZLIB
   TEST_DEPENDS
     ITKTestKernel
   DESCRIPTION

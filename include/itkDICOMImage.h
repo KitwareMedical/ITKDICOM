@@ -19,6 +19,7 @@
 #define itkDICOMImage_h
 
 #include "itkImage.h"
+#include "itkMetaDataDictionary.h"
 
 namespace itk
 {
@@ -119,14 +120,21 @@ public:
   /** Offset typedef (relative position between indices) */
   typedef typename Superclass::OffsetValueType OffsetValueType;
 
+  MetaDataDictionary & GetDICOMMetaData();
+
+  const MetaDataDictionary & GetDICOMMetaData() const;
+
+  void SetDICOMMetaData(const MetaDataDictionary & rhs);
+
 protected:
   DICOMImage();
   void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
 
-  virtual ~DICOMImage() {}
+  virtual ~DICOMImage();
 
 private:
   ITK_DISALLOW_COPY_AND_ASSIGN(DICOMImage);
+  MetaDataDictionary *m_DICOMMetaData;
 };
 } // end namespace itk
 
