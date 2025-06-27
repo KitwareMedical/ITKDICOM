@@ -1,8 +1,8 @@
 ITKDICOM
 ========
 
-.. image:: https://circleci.com/gh/KitwareMedical/ITKDICOM/tree/master.svg?style=shield
-    :target: https://circleci.com/gh/KitwareMedical/ITKDICOM/tree/master
+.. image:: https://circleci.com/gh/KitwareMedical/ITKDICOM/tree/main.svg?style=shield
+    :target: https://circleci.com/gh/KitwareMedical/ITKDICOM/tree/main
 
 Better support for DICOM in `ITK <https://itk.org/>`_.
 
